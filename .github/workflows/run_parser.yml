@@ -1,0 +1,30 @@
+name: Run Bank Parser
+on:
+  push:
+    paths:
+      - 'statements/*.pdf' # Run whenever a PDF is added to this folder
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install pandas pypdf openpyxl
+
+      - name: Run Script
+        run: python pdf_parser.py statements/latest_statement.pdf
+
+      - name: Commit and Push Excel
+        run: |
+          git config --global user.name "GitHub Action"
+          git add Bank_Data_Drop/
+          git commit -m "Auto-generated Excel statement"
+          git push
